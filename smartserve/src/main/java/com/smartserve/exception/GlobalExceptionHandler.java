@@ -4,6 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
+
+import com.smartserve.menu.FoodNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -60,3 +63,9 @@ Invalid JWT										✅ 401 Unauthorized
  * 
  * 
  */
+    @ExceptionHandler(FoodNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleFoodNotFound(FoodNotFoundException e) {
+        return e.getMessage();
+    }
+}
