@@ -44,6 +44,10 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(exception.getMessage());
     }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
     // Handle food not found
     @ExceptionHandler(FoodNotFoundException.class)
