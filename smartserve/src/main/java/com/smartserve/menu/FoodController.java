@@ -1,9 +1,15 @@
+
 package com.smartserve.menu;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/foods")
@@ -12,37 +18,58 @@ public class FoodController {
     @Autowired
     private FoodService foodService;
 
+    // Add a new food item
     @PostMapping
-    public FoodDto save(@RequestBody FoodDto foodDto) {
+    public ResponseEntity<FoodDto> save(
+            @Valid @RequestBody FoodDto foodDto,
+            BindingResult result) {
 
-        return foodService.save(foodDto);
+        if (result.hasErrors()) {
+            throw new IllegalArgumentException(
+                    result.getFieldError().getDefaultMessage());
+        }
+
+        FoodDto savedFood = foodService.save(foodDto);
+
+        return new ResponseEntity<>(savedFood, HttpStatus.CREATED);
     }
 
+    // Get all food items
     @GetMapping
-    public List<FoodDto> getAll() {
+    public ResponseEntity<List<FoodDto>> getAll() {
 
-        return foodService.getAll();
+        return ResponseEntity.ok(foodService.getAll());
     }
 
+    // Get food by ID
     @GetMapping("/{id}")
-    public FoodDto getById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<FoodDto> getById(
+            @PathVariable Long id) throws Exception {
 
-        return foodService.getById(id);
+        return ResponseEntity.ok(foodService.getById(id));
     }
 
     @PutMapping("/{id}")
-    public FoodDto update(
-            @RequestBody FoodDto foodDto,
-            @PathVariable Long id) throws Exception {
+    public ResponseEntity<FoodDto> update(
+            @PathVariable Long id,
+            @Valid @RequestBody FoodDto foodDto,
+            BindingResult result) throws Exception {
 
-        return foodService.update(foodDto, id);
+        if (result.hasErrors()) {
+            throw new IllegalArgumentException(
+                    result.getFieldError().getDefaultMessage());
+        }
+
+        return ResponseEntity.ok(foodService.update(foodDto, id));
     }
 
+    // Delete food by ID
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) throws Exception {
+    public ResponseEntity<String> delete(
+            @PathVariable Long id) throws Exception {
 
         foodService.delete(id);
 
-        return "Food deleted successfully";
+        return ResponseEntity.ok("Food deleted successfully");
     }
 }
